@@ -47,7 +47,7 @@ const loginInitialValues = {
   password:""
 }
 
-export const Login = () => {
+export const Login = ({isUserAuthenticated}) => {
 
   const [account, toggleAccount] = useState("login");
   const [signup, setSignup] = useState(signupInitianValues)
@@ -93,8 +93,8 @@ export const Login = () => {
         sessionStorage.setItem("accessToken",`Bearer ${response.data.accessToken}`)
         sessionStorage.setItem("refreshToken",`Bearer ${response.data.refreshToken}`)
         setAccount({name:response.data.name ,email:response.data.email})
-        console.log("Tokens set, navigating to /home");
         navigate("/home");
+        isUserAuthenticated(true);
       } else {
         setError("Login failed. Please check your credentials."); // Display a more meaningful error
       }
