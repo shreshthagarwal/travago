@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material";
 import Banner from "./Banner";
 import Categories from "./Categories";
+import Itenaries from "./Itenaries";
 
 const Home = () => {
     return (
@@ -11,7 +12,7 @@ const Home = () => {
                     <Categories />
                 </Grid>
                 <Grid item lg={10} sm={10} xs={12}>
-                    Itineraries
+                    <Itenaries />
                 </Grid>
             </Grid>
         </>

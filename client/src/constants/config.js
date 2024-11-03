@@ -25,5 +25,7 @@ export const SERVICE_URLS = {
     userSignup: { url: "/signup", method: 'POST'},
     userLogin: { url: "/login", method: 'POST'},
     uploadFile: {url: "/file/upload", method: "POST"},
-    createItenary: {url: "/create", method:"POST"} 
+    createItenary: {url: "/create", method:"POST"},
+    getItenaries: {url: "/itenaries", method: "GET", params: true},
+    getPostById: {url: "post", method: "GET", query: true}
 }

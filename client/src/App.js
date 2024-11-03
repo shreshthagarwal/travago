@@ -6,6 +6,7 @@ import Home from './components/home/Home';
 import DataProvider from './context/DataProvider';
 import Header from "./components/header/Header";
 import CreatePost from "./components/home/CreatePost";
+import DetailView from "./components/home/DetailView";
 
 const PrivateRoute = ({isAuthenticated, ...props}) => {
   return isAuthenticated ? 
@@ -37,6 +38,10 @@ function App() {
 
             <Route path="/home/create" element={<PrivateRoute isAuthenticated={isAuthenticated} />} >
               <Route path='/home/create' element={<CreatePost />} />
+            </Route>
+
+            <Route path="/home/details/:id" element={<PrivateRoute isAuthenticated={isAuthenticated} />} >
+              <Route path='/home/details/:id' element={<DetailView />} />
             </Route>
 
         </Routes>
