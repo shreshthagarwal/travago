@@ -7,6 +7,7 @@ import DataProvider from './context/DataProvider';
 import Header from "./components/header/Header";
 import CreatePost from "./components/home/CreatePost";
 import DetailView from "./components/home/DetailView";
+import Landing from "./components/landing/Landing";
 
 const PrivateRoute = ({isAuthenticated, ...props}) => {
   return isAuthenticated ? 
@@ -29,7 +30,7 @@ function App() {
         <div>
           
           <Routes>
-          <Route path='/' element={<Login />} />
+          <Route path='/' element={<Landing />} />
             <Route path='/login' element={<Login isUserAuthenticated={isUserAuthenticated} />}></Route>
 
             <Route path="/home" element={<PrivateRoute isAuthenticated={isAuthenticated} />} >
