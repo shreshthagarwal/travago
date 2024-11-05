@@ -1,139 +1,197 @@
-import { useContext, useState } from "react"
-import React from 'react'
-import { Box,TextField,Button,styled, Typography } from '@mui/material';
-
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Box, TextField, Button, styled, Typography } from "@mui/material";
 import { API } from "../../service/api";
 import { DataContext } from "../../context/DataProvider";
-import { useNavigate } from "react-router-dom";
+import sidebg from "../../assets/LogandSignbg.jpg";
+import log from "../../assets/Logo2.png";
 
-const Component = styled(Box)`
-width:400px; 
-margin:auto;
-background-color: beige;
-border-radius: 30px;`
-
-const Image = styled("img")({
-  width:300,
-  margin:"auto",
-  display:"flex",
-  padding:20
-})
-
-const Wrapper = styled(Box)`
-padding:20px;
-display:flex;
-flex:1;
-flex-direction:column;
-& > div, & > button, & > p {
-margin: 10px 0px;
-}
-`
-
-const Error = styled(Typography)`
-  font-size: 10px;
-  margin-top: 10px;
+const Container = styled(Box)`
+  display: flex;
+  height: 100vh;
+  background-color: beige;
 `;
 
+const FormContainer = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  max-width: 400px;
+  padding: 2rem;
+  margin: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
-const signupInitianValues = {
-  name:"",
-  email:"",
-  password: ""
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+`;
 
-}
+const Image = styled("img")({
+  width: "100%",
+  height: "auto",
+  objectFit: "cover",
+  borderRadius: "4% 0 0 4%",
+});
 
-const loginInitialValues = {
-  email:"",
-  password:""
-}
+const Logo = styled("img")({
+  width: 120,
+  marginBottom: "1rem",
+});
 
-export const Login = ({isUserAuthenticated}) => {
+const Title = styled(Typography)`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f4a261;
+  margin-bottom: 0.5rem;
+`;
 
-  const [account, toggleAccount] = useState("login");
-  const [signup, setSignup] = useState(signupInitianValues)
-  const [login,setLogin] = useState(loginInitialValues)
-  const [error,setError] = useState("");
-  const {setAccount} = useContext(DataContext);
+const ErrorText = styled(Typography)`
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+`;
 
+export const Login = ({ isUserAuthenticated }) => {
+  const [account, setAccount] = useState("login");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [credentials, setCredentials] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  
   const navigate = useNavigate();
+  const { setAccount: updateAccount } = useContext(DataContext);
 
-  const toggleSignup = () => {
-    account === "signup" ? toggleAccount("login") : toggleAccount("signup")
-  }
+  const toggleAccount = () => {
+    setAccount(account === "login" ? "signup" : "login");
+    setError("");
+    setCredentials({ name: "", email: "", password: "", confirmPassword: "" });
+  };
 
-  const onInputChange = (e) => {
-    setSignup({ ...signup, [e.target.name]: e.target.value})
-  }
+  const handleInputChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
 
-  const onValueChange = (e) => {
-    setLogin({...login,[e.target.name]:e.target.value})
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-  const signupUser = async () => {
-    try {
-      let response = await API.userSignup(signup);
-      if (response.isSuccess){
-        setError("");
-        setSignup(signupInitianValues);
-        toggleAccount("login");
-      } else {
-        setError("Error!")
-      }
-    } catch (error) {
-      console.error("Sign-up failed", error); 
+    if (account === "signup" && credentials.password !== credentials.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
-  }
 
-  const loginUser = async () => {
     try {
-      let response = await API.userLogin(login);
-      if (response.isSuccess) { 
-        console.log(response)
+      const response = account === "signup"
+        ? await API.userSignup({ name: credentials.name, email: credentials.email, password: credentials.password })
+        : await API.userLogin({ email: credentials.email, password: credentials.password });
+
+      if (response.isSuccess) {
         setError("");
-        sessionStorage.setItem("accessToken",`Bearer ${response.data.accessToken}`)
-        sessionStorage.setItem("refreshToken",`Bearer ${response.data.refreshToken}`)
-        setAccount({name:response.data.name ,email:response.data.email})
-        navigate("/home");
-        isUserAuthenticated(true);
+        if (account === "login") {
+          sessionStorage.setItem("accessToken", `Bearer ${response.data.accessToken}`);
+          sessionStorage.setItem("refreshToken", `Bearer ${response.data.refreshToken}`);
+          updateAccount({ name: response.data.name, email: response.data.email });
+          navigate("/home");
+          isUserAuthenticated(true);
+        } else {
+          toggleAccount();
+        }
       } else {
-        setError("Login failed. Please check your credentials."); // Display a more meaningful error
+        setError("Authentication failed. Please check your details.");
       }
-    } catch (error) {
-      console.error("Login failed", error);
+    } catch (err) {
+      console.error("Authentication error:", err);
       setError("Something went wrong. Please try again.");
     }
-  }
-  
-  
+  };
 
   return (
-    <Component component="section" sx={{ p: 2 }}>
-      { account === "login" ?<>
-      <Image src={"https://equalengineers.com/wp-content/uploads/2024/04/dummy-logo-5b.png"} alt="" />
-      <Wrapper>
-      <TextField id="outlined-basic" value={login.email} onChange={(e)=>onValueChange(e)} label="Email" name="email" variant="outlined" />
-      <TextField id="outlined-basic" value={login.password} onChange={(e)=>onValueChange(e)} label="Password" name="password" variant="outlined" />
-      <Button onClick={()=>loginUser()} variant="contained">Login</Button>
-      <Typography style={{ textAlign:"center"}}>
-  Dont have an account?
-</Typography>
-      <Button onClick={()=>toggleSignup()} variant="outlined">Create an account</Button>
-      </Wrapper> </>:<>
-      <Wrapper>
-              <Image src={"https://equalengineers.com/wp-content/uploads/2024/04/dummy-logo-5b.png"} alt="" />
-
-      <TextField id="outlined-basic" onChange={(e)=>onInputChange(e)} label="Name" name="name" variant="outlined" />
-      <TextField id="outlined-basic" onChange={(e)=>onInputChange(e)} label="Email" name="email" variant="outlined" />
-      <TextField id="outlined-basic" onChange={(e)=>onInputChange(e)} label="Password" name="password" variant="outlined" />
-        {error && <Error>{error}</Error>}
-      <Button onClick={()=>signupUser()} variant="contained">Sign Up</Button>
-      <Typography style={{ textAlign:"center"}}>
-  Already have an account?
-</Typography>
-      <Button onClick={()=>toggleSignup()} variant="outlined">Sign In</Button>
-      </Wrapper>
-      </>
-}
-    </Component>
-  )
-}
+    <Container>
+      <FormContainer>
+        <Logo src={log} alt="Logo" />
+        <Title>{account === "login" ? "Welcome Back" : "Get Started"}</Title>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          {account === "login"
+            ? "Enter your credentials to access your account."
+            : "Enter your credentials to create an account."}
+        </Typography>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {account === "signup" && (
+            <TextField
+              label="Full Name"
+              name="name"
+              value={credentials.name}
+              onChange={handleInputChange}
+              required
+              fullWidth
+              margin="normal"
+            />
+          )}
+          <TextField
+            label="Email"
+            name="email"
+            value={credentials.email}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={credentials.password}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+          />
+          {account === "signup" && (
+            <TextField
+              label="Confirm Password"
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              value={credentials.confirmPassword}
+              onChange={handleInputChange}
+              required
+              fullWidth
+              margin="normal"
+            />
+          )}
+          <Typography
+            onClick={() => setShowPassword(!showPassword)}
+            style={{ cursor: "pointer", color: "#f4a261" }}
+          >
+            {showPassword ? "Hide Password" : "Show Password"}
+          </Typography>
+          {error && <ErrorText>{error}</ErrorText>}
+          <Button type="submit" variant="contained" sx={{ backgroundColor: "#f4a261" }} fullWidth>
+            {account === "login" ? "Log In" : "Sign Up"}
+          </Button>
+        </form>
+        
+        <Typography variant="body2" align="center" marginTop={2}>
+          {account === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+          <Link to="#" onClick={toggleAccount} style={{ color: "#f4a261" }}>
+            {account === "login" ? "Sign Up" : "Log In"}
+          </Link>
+        </Typography>
+      </FormContainer>
+      
+      <Box sx={{ display: { xs: "none", md: "block" }, width: "50%" }}>
+        <Image src={sidebg} alt="Background" />
+      </Box>
+    </Container>
+  );
+};
