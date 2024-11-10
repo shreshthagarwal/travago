@@ -2,7 +2,7 @@ import { AppBar, Toolbar, styled } from "@mui/material"
 import { Link } from "react-router-dom"
 
 const Component = styled(AppBar)`
-background: beige;
+background: white;
 `
 
 const Container = styled(Toolbar)`
@@ -20,9 +20,9 @@ const Header = () => {
         <Component>
             <Container>
                 <Link to="/home">Home</Link>
-                <Link to="/home">Home</Link>
-                <Link to="/home">Home</Link>
-                <Link to="/home">Home</Link>
+                <Link to="/about">About Us</Link>
+                <Link to="/contact">Contact</Link>
+                <Link to="/">Logout</Link>
             </Container>
         </Component>
     )

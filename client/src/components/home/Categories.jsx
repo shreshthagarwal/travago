@@ -1,62 +1,60 @@
-import { Button, Table, TableBody, TableCell, TableHead, TableRow, styled } from "@mui/material"
+import { Box, Button, styled } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { categories } from "../../constants/data";
 import { Link, useSearchParams } from "react-router-dom";
 
-const StyledTable = styled(Table)`
-border: 1px solid black;
+const StyledButton = styled(Button)`
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-transform: none;
+    &:hover {
+        background-color: #e0e0e0;
+    }
 `;
 
-const StyledButton = styled(Button)`
-margin: 20px;
-width: 85%;
-
+const CategorySlider = styled(Box)`
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 15px;
+    scroll-behavior: smooth;
 `;
 
 const Categories = () => {
+    const [searchParams] = useSearchParams();
+    const category = searchParams.get("category");
 
-    const [searchParams] = useSearchParams()
-    const category = searchParams.get("category")
     return (
-        <>
-        <Link to={`/home/create?category=${category || ""}`}>
-            <StyledButton variant="contained" startIcon={<AddIcon />}>
-                Create an Itenary
-            </StyledButton>
-        </Link>
-        
+        <CategorySlider>
+            {/* All Categories Button */}
+            <Link to="/home">
+                <StyledButton variant="outlined">
+                    All Categories
+                </StyledButton>
+            </Link>
 
-<StyledTable>
-    <TableHead>
-<TableRow>
-    <TableCell>
-        <Link to="/home">
-            All Expenses
-        </Link>
-        
-    </TableCell>
-</TableRow>
-    </TableHead>
-    <TableBody>
-        {
-            categories.map(category=>(
-                <TableRow key={category.id}>
-                    <TableCell>
-                        <Link to={`/home?category=${category.type}`}>
-                            {category.type}
-                        </Link>
-                        
-                    </TableCell>
-                </TableRow>
-            ))
-        }
-    </TableBody>
-</StyledTable>
+            {/* Create Itinerary Button */}
+            
 
+            {/* Category Buttons */}
+            {categories.map(category => (
+                <Link key={category.id} to={`/home?category=${category.type}`}>
+                    <StyledButton>
+                        {category.type}
+                    </StyledButton>
+                </Link>
+            ))}
 
+<Link to={`/home/create?category=${category || ""}`}>
+                <StyledButton variant="filled" startIcon={<AddIcon />}>
+                    Create an Itinerary
+                </StyledButton>
+            </Link>
+        </CategorySlider>
+    );
+};
 
-        </>
-    )
-}
-
-export default Categories
+export default Categories;

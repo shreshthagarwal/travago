@@ -1,20 +1,27 @@
-import { Grid } from "@mui/material";
+import { Grid, Box, styled } from "@mui/material";
 import Banner from "./Banner";
 import Categories from "./Categories";
 import Itenaries from "./Itenaries";
+
+const CenterContainer = styled(Box)({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "20px",
+    marginBottom: "20px"
+});
 
 const Home = () => {
     return (
         <>
             <Banner />
-            <Grid container>
-                <Grid item lg={2} sm={2} xs={12}>
-                    <Categories />
-                </Grid>
-                <Grid item lg={10} sm={10} xs={12}>
-                    <Itenaries />
-                </Grid>
-            </Grid>
+            <CenterContainer>
+                <Categories />
+            </CenterContainer>
+            <Box>
+                <Itenaries />
+            </Box>
         </>
     );
 };
