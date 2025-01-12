@@ -2,7 +2,7 @@ import axios from "axios"
 import { API_MESSAGES, SERVICE_URLS } from "../constants/config"
 import { getAccessToken, getType } from "../utils/common-utils"
 
-const API_URL = "http://localhost:8000"
+const API_URL = "https://travora-backend-q8lt94cjs-shreshthagarwals-projects.vercel.app:8000"
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
