@@ -1,60 +1,53 @@
-import { Box, Button, styled } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { categories } from "../../constants/data";
 import { Link, useSearchParams } from "react-router-dom";
 
-const StyledButton = styled(Button)`
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-transform: none;
-    &:hover {
-        background-color: #e0e0e0;
-    }
-`;
-
-const CategorySlider = styled(Box)`
-    display: flex;
-    overflow-x: auto;
-    padding: 10px;
-    gap: 15px;
-    scroll-behavior: smooth;
-`;
+// Custom Button Component
+const CustomButton = ({ children, to, isContained, startIcon }) => {
+  return (
+    <Link to={to}>
+      <button
+        className={`w-full py-2 px-4 rounded-lg 
+          ${isContained ? "bg-[#ad9875] text-white" : "bg-white text-gray-700 border-2 border-[#ad9875]"} 
+          hover:bg-[#AD9875] hover:text-white transition-all`}
+      >
+        {startIcon && <span className="mr-2">{startIcon}</span>}
+        {children}
+      </button>
+    </Link>
+  );
+};
 
 const Categories = () => {
-    const [searchParams] = useSearchParams();
-    const category = searchParams.get("category");
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category");
 
-    return (
-        <CategorySlider>
-            {/* All Categories Button */}
-            <Link to="/home">
-                <StyledButton variant="outlined">
-                    All Categories
-                </StyledButton>
-            </Link>
+  return (
+    <div className="bg-[#E2D2B8] rounded-lg">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+        {/* All Categories Button */}
+        <CustomButton to="/home">All Categories</CustomButton>
 
-            {/* Create Itinerary Button */}
-            
+        
 
-            {/* Category Buttons */}
-            {categories.map(category => (
-                <Link key={category.id} to={`/home?category=${category.type}`}>
-                    <StyledButton>
-                        {category.type}
-                    </StyledButton>
-                </Link>
-            ))}
+        {/* Category Buttons */}
+        {categories.map((cat) => (
+          <CustomButton key={cat.id} to={`/home?category=${cat.type}`}>
+            {cat.type}
+          </CustomButton>
+        ))}
 
-<Link to={`/home/create?category=${category || ""}`}>
-                <StyledButton variant="filled" startIcon={<AddIcon />}>
-                    Create an Itinerary
-                </StyledButton>
-            </Link>
-        </CategorySlider>
-    );
+        {/* Create Itinerary Button */}
+        <CustomButton
+          to={`/home/create?category=${category || ""}`}
+          isContained={true}
+          startIcon={<AddIcon />}
+        >
+          Create an Itinerary
+        </CustomButton>
+      </div>
+    </div>
+  );
 };
 
 export default Categories;

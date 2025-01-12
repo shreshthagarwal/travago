@@ -1,55 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import { Box, FormControl, styled, InputBase, Button, TextareaAutosize } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataProvider";
 import { API } from "../../service/api";
-
-const PageContainer = styled(Box)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-    padding-top: 70px;
-
-  background-color: #f9fafb;
-`;
-
-const Container = styled(Box)`
-  width: 100%;
-  max-width: 600px;
-  
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-`;
-
-const Image = styled("img")({
-  width: "100%",
-  height: "40vh",
-  objectFit: "cover",
-  borderRadius: "8px",
-});
-
-const Input = styled("label")({
-  fontSize: "large",
-  backgroundColor: "beige",
-  borderRadius: "10px",
-  padding: "10px",
-  border: "1px dashed black",
-  margin: "10px",
-  display: "flex",
-  alignItems: "center",
-  cursor: "pointer",
-  justifyContent: "center",
-});
-
-const StyledFormControl = styled(FormControl)`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
 
 const initialPost = {
   title: "",
@@ -111,54 +63,84 @@ const CreatePost = () => {
     }
   };
 
+  const CustomButton = ({ children, onClick, disabled, isLoading }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`w-full px-6 py-3 text-white rounded-lg transition-all ${
+        isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-[#AD9875] hover:bg-[#8C7B65]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+
   return (
-    <PageContainer>
-      <Container>
-        <h2 className="text-2xl font-semibold text-center mb-6">Add a New Itinerary</h2>
-        <Image src={url} alt="Itinerary Header" />
-        
-        <StyledFormControl>
-          <Input htmlFor="fileInput">
-            Upload Header Image <CloudUploadIcon fontSize="medium" />
-          </Input>
-          <input type="file" id="fileInput" style={{ display: "none" }} onChange={(e) => setFile(e.target.files[0])} />
+    <div className="bg-[#E2D2B8] flex justify-center items-center py-6">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg m-5">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-[#AD9875]">
+          Create a New Itenary
+        </h2>
 
-          <InputBase
-            placeholder="Enter Itinerary Title"
-            onChange={(e) => handleChange(e)}
+        <img
+          src={url}
+          alt="Itinerary Header"
+          className="w-full h-40 object-cover rounded-lg mb-6"
+        />
+
+        <div className="space-y-4">
+          {/* Upload Header Image */}
+          <label
+            htmlFor="fileInput"
+            className="flex justify-center items-center gap-2 bg-[#E2D2B8] hover:bg-[#8C7B65] text-gray-700 py-3 px-4 rounded-lg border border-dashed border-gray-400 cursor-pointer"
+          >
+            Upload Header Image
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+
+          {/* Title Input */}
+          <input
+            type="text"
+            placeholder="Enter Itenary Title"
             name="title"
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#AD9875] focus:outline-none"
           />
 
-          <InputBase
+          {/* Destination Input */}
+          <input
+            type="text"
             placeholder="Enter Destination"
-            onChange={(e) => handleChange(e)}
             name="destination"
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#AD9875] focus:outline-none"
           />
 
-          <TextareaAutosize
-            minRows={4}
-            placeholder="Tell us about your Itinerary..."
-            onChange={(e) => handleChange(e)}
+          {/* Description Input */}
+          <textarea
+            rows="4"
+            placeholder="Tell us about your Itenary..."
             name="description"
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-          />
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#AD9875] focus:outline-none"
+          ></textarea>
 
-          <Button
-            variant="contained"
+          {/* Publish Button */}
+          <CustomButton
             onClick={saveItinerary}
             disabled={loading}
-            className={`px-6 py-3 text-white ${loading ? 'bg-gray-500' : 'bg-blue-600'} rounded-lg hover:bg-blue-700 transition-colors`}
+            isLoading={loading}
           >
-            {loading ? "Saving..." : "Publish Itinerary"}
-          </Button>
-        </StyledFormControl>
-      </Container>
-    </PageContainer>
+            {loading ? "Saving..." : "Publish Itenary"}
+          </CustomButton>
+        </div>
+      </div>
+    </div>
   );
 };
 

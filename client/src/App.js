@@ -8,8 +8,6 @@ import Header from "./components/header/Header";
 import CreatePost from "./components/home/CreatePost";
 import DetailView from "./components/home/DetailView";
 import Landing from "./components/landing/Landing";
-import About from "./components/header/About";
-import Contact from "./components/header/Contact";
 
 const PrivateRoute = ({isAuthenticated, ...props}) => {
   return isAuthenticated ? 
@@ -33,8 +31,6 @@ function App() {
           
           <Routes>
           <Route path='/' element={<Landing />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login isUserAuthenticated={isUserAuthenticated} />}></Route>
 
             <Route path="/home" element={<PrivateRoute isAuthenticated={isAuthenticated} />} >
