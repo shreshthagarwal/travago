@@ -7,15 +7,16 @@ const Itenaries = () => {
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      let response = await API.getItenaries({ category: category || "" });
-      if (response.isSuccess) {
-        setItenary(response.data);
-      }
-    };
-    fetchData();
-  }, [category]);
+useEffect(() => {
+  const fetchData = async () => {
+    let response = await API.getItenaries({ category: category || "" });
+    if (response.isSuccess) {
+      console.log(response.data); // Debug: Check what the API returns
+      setItenary(response.data);
+    }
+  };
+  fetchData();
+}, [category]);
 
   return (
     <div className="bg-[#E2D2B8] p-6 rounded-lg">
